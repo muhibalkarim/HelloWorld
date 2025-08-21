@@ -1,13 +1,11 @@
+name: CMake Build Matrix
+
 on:
   push:
     branches:
       - master
   workflow_dispatch:
 
-
-name: CMake Build Matrix
-
-on: [push, pull_request]
 
 env:
   CMAKE_VERSION: "3.29.6"
