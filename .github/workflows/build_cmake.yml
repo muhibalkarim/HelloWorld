@@ -37,9 +37,11 @@ jobs:
         run: cmake --build build
 
       - name: List build directory
-        run: ls build
+        run: |
+          echo "Contents of build directory:"
+          ls build || dir build
 
       - name: Run HelloWorld
         run: |
-          chmod +x build/HelloWorld || true
-          ./build/HelloWorld || echo "Executable not found or failed to run"
+          echo "Searching for HelloWorld executable..."
+          find . -type f -name "HelloWorld*" -exec echo "Found: {}" \; -exec {} \; || echo "Executable not found or failed to run"
