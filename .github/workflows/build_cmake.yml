@@ -60,6 +60,9 @@ jobs:
     - name: Download Ninja and CMake
       shell: cmake -P {0}
       run: |
+        - name: Run HelloWorld
+        run: ./build/HelloWorld
+
         set(cmake_version $ENV{CMAKE_VERSION})
         set(ninja_version $ENV{NINJA_VERSION})
 
