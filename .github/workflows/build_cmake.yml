@@ -2,46 +2,34 @@ name: CMake Build Matrix
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build on ${{ matrix.os }} with ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         compiler: [gcc, clang]
-        exclude:
-          - os: windows-latest
-            compiler: clang
-          - os: macos-latest
-            compiler: gcc
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up CMake
-        uses: lukka/get-cmake@latest
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y cmake ninja-build ${{ matrix.compiler }}
 
-      - name: Set up Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Debug Info
+      run: |
+        echo "Runner OS: ${{ runner.os }}"
+        echo "Compiler: ${{ matrix.compiler }}"
 
-      - name: Configure CMake
-        run: cmake -S . -B build -G Ninja
+    - name: Configure CMake
+      run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=${{ matrix.compiler }}
 
-      - name: Build
-        run: cmake --build build
+    - name: Build
+      run: cmake --build build
 
-      - name: List build directory
-        run: |
-          echo "Contents of build directory:"
-          ls build || dir build
-
-      - name: Run HelloWorld
-        run: |
-          echo "Searching for HelloWorld executable..."
-          find . -type f -name "HelloWorld*" -exec echo "Found: {}" \; -exec {} \; || echo "Executable not found or failed to run"
+    - name: Run HelloWorld
+      run: ./build/HelloWorld
